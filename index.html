@@ -169,6 +169,18 @@
             
             function resize(){
                 $('#keyboard_container').css('top',($(window).height()-$('#keyboard_container').height()-20) + 'px')
+                var free_height = ($(window).height()-$('#keyboard_container').height()-100 - $('#header').height())
+                //if (free_height < $('#guesses_container').height()){
+                    var gs = Math.min(60,free_height / (max_guesses+1));
+                    $('#guesses_container .letter').css('height',gs*0.9+'px')
+                    $('#guesses_container .letter').css('width',gs*0.9+'px')
+                    $('#guesses_container .letter').css('margin',5+'px')
+                    $('#header .letter').css('height',gs*0.9+'px')
+                    $('#header .letter').css('width',gs*0.9+'px')
+                    $('#guesses_container .letter').css('margin',5+'px')
+                    console.log(gs) 
+
+                //}
                 
             }
 
