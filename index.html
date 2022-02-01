@@ -11,6 +11,14 @@
                 border-spacing:5pt;
                 margin:0;
                 padding: 0;
+
+                -webkit-touch-callout: none; /* iOS Safari */
+                -webkit-user-select: none; /* Safari */
+                -khtml-user-select: none; /* Konqueror HTML */
+                -moz-user-select: none; /* Old versions of Firefox */
+                    -ms-user-select: none; /* Internet Explorer/Edge */
+                        user-select: none; 
+
             }
 
             .letter{
@@ -100,8 +108,17 @@
             var guesses = []
             var num_letters = 5
             var max_guesses = 6
+            var guessed = false
 
-            var target = nouns[Math.floor(Math.random()*nouns.length)]
+            p=window.location.hash;
+            var idx = -1
+            if(p.length)
+                idx = parseInt(p.slice(2));
+            else
+                idx = Math.floor(Math.random()*nouns.length);
+
+                window.location.hash='#n'+idx
+            var target = nouns[idx]
             
             var keys = 'йцукенгшщзхъфывапролджэячсмитьбю'
             var en_keys = 'qwertyuiop[]asdfghjkl;\'zxcvbnm,.'
@@ -115,6 +132,22 @@
                 //TODO
             }
             
+            function reset(){
+                current_guesses = 0
+                current_word = ''
+                guessed = false
+                $('#guesses_container .letter').html('')
+                $('.letter').removeClass('right_letter')
+                .removeClass('wrong_letter').removeClass('wrong_pos')
+
+                idx = Math.floor(Math.random()*nouns.length);
+
+                window.location.hash='#n'+idx
+                target = nouns[idx]
+
+            }
+
+
             function create_board(){
                 var code = ''
                 for (var i=0;i<max_guesses;i+=1){
@@ -169,18 +202,35 @@
             
             function resize(){
                 $('#keyboard_container').css('top',($(window).height()-$('#keyboard_container').height()-20) + 'px')
+                var keysize = 60;
                 var free_height = ($(window).height()-$('#keyboard_container').height()-100 - $('#header').height())
-                //if (free_height < $('#guesses_container').height()){
-                    var gs = Math.min(60,free_height / (max_guesses+1));
-                    $('#guesses_container .letter').css('height',gs*0.9+'px')
-                    $('#guesses_container .letter').css('width',gs*0.9+'px')
+                if (free_height < $('#guesses_container').height()){
+                    var gs = Math.min(keysize,free_height / (max_guesses+1));
+                    $('#guesses_container .letter').css('height',gs*0.9+'px').css('width',gs*0.9+'px')
                     $('#guesses_container .letter').css('margin',5+'px')
-                    $('#header .letter').css('height',gs*0.9+'px')
-                    $('#header .letter').css('width',gs*0.9+'px')
+                    $('#header .letter').css('height',gs*0.9+'px').css('width',gs*0.9+'px')
                     $('#guesses_container .letter').css('margin',5+'px')
                     console.log(gs) 
+                    
+                    var max_key_len = 0;
+                    for (var i=0; i<lengths.length; i+=1)
+                        max_key_len = Math.max(max_key_len,lengths[i])
+                    var minw = max_key_len*(keysize+keysize*0.05);
+                    if($(window).width()<minw){
+                        var keyw   = $(window).width()/max_key_len*0.95
+                        var keyh   = keyw*1.5
+                        var keypad = $(window).width()/max_key_len*0.03
+                        $('.key').css('width',keyw+'px').css('height',keyh+'px').css('padding',keypad+'px')
 
-                //}
+
+                    }
+
+
+
+                } else {
+
+
+                }
                 
             }
 
@@ -209,7 +259,14 @@
                 current_guesses += 1;
                 if (current_guesses==max_guesses){
                     alert(target)
+                    guessed=true
                 }
+
+                if (current_word==target){
+                    guessed=true;
+                    return
+                }
+
                 current_word = ''
             }
 
@@ -270,6 +327,8 @@
                     }
 
                     else if(key=='Enter'){
+                        if(guessed)
+                            reset();
                         if (current_word.length != num_letters){
                             warn('Сликом короткое слово!')
                             return 
@@ -284,11 +343,11 @@
     <body>
         <div id='header'>
             <div id='header_logo'>
-                <div class='letter right_letter'>С</div>
-                <div class='letter wrong_letter'>Л</div>
-                <div class='letter wrong_pos'>О</div>
-                <div class='letter wrong_letter'>В</div>
-                <div class='letter wrong_letter'>Р</div>
+                <div class='letter '>С</div>
+                <div class='letter '>Л</div>
+                <div class='letter '>О</div>
+                <div class='letter '>В</div>
+                <div class='letter '>Р</div>
             </div>
         </div>
         
